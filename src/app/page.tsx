@@ -10,6 +10,7 @@ function Page() {
   const [tempIdentifier, setTempIdentifier] = useState('')
   const [posts, setPosts] = useState<PostView[]>([])
   const [loading, setLoading] = useState(false)
+  const [hasSearched, setHasSearched] = useState(false)
 
   const fetchPosts = async () => {
     if (!tempIdentifier) {
@@ -17,6 +18,7 @@ function Page() {
       return
     }
     setLoading(true)
+    setHasSearched(true)
     let allPosts: PostView[] = []
     let cursor = null
     const uniqueIds = new Set()
@@ -66,10 +68,12 @@ function Page() {
         fetchPosts={fetchPosts}
         loading={loading}
       />
-      {!loading && posts.length > 0 && posts.map((item, index) => (
+      {!loading && hasSearched && posts.length === 0 && (
+        <div className="mt-4 text-center">No posts found.</div>
+      )}
+      {!loading && posts.map((item, index) => (
         <Post key={index} post={item.post} identifier={item.post.author.handle} />
       ))}
-      {posts.length === 0 && !loading && <div className="mt-4 text-center">No posts found.</div>}
       <WarningBar />
     </div>
   )
