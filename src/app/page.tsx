@@ -2,9 +2,9 @@
 
 import { useState } from 'react'
 import type { OutputSchema } from '@atproto/api/dist/client/types/app/bsky/feed/getAuthorFeed'
-import Post from '@/app/_components/Post'
-import SearchBar from '@/app/_components/SearchBar'
-import WarningBar from '@/app/_components/WarningBar'
+import Post from '@/components/Post'
+import SearchBar from '@/components/SearchBar'
+import WarningBar from '@/components/WarningBar'
 
 function Page() {
   const [tempIdentifier, setTempIdentifier] = useState('')

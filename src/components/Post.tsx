@@ -1,6 +1,6 @@
 import type { FeedViewPost } from '@atproto/api/dist/client/types/app/bsky/feed/defs'
-import LikeIcon from '@/app/_components/LikeIcon'
-import RepostIcon from '@/app/_components/RepostIcon'
+import LikeIcon from '@/components/LikeIcon'
+import RepostIcon from '@/components/RepostIcon'
 import { getElapsedTime } from '@/lib/utils'
 
 const Post: React.FC<FeedViewPost> = ({ post }) => {
