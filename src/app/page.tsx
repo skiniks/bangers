@@ -24,21 +24,22 @@ function Page() {
 
     try {
       do {
-        const response: Response = await fetch(`https://api.bsky.app/xrpc/app.bsky.feed.getAuthorFeed?actor=${tempIdentifier}${cursor ? `&cursor=${cursor}` : ''}`)
+        const response = await fetch(`https://api.bsky.app/xrpc/app.bsky.feed.getAuthorFeed?actor=${tempIdentifier}${cursor ? `&cursor=${cursor}` : ''}`)
         if (response.status === 200) {
           const data: OutputSchema = await response.json()
           if (data && data.feed) {
-            const newPosts = data.feed.filter(post => !uniqueIds.has(post.post.cid))
-            newPosts.forEach(post => uniqueIds.add(post.post.cid))
-            allPosts = allPosts.concat(newPosts)
+            data.feed.forEach((post) => {
+              if (!uniqueIds.has(post.post.cid)) {
+                uniqueIds.add(post.post.cid)
+                allPosts.push(post)
+              }
+            });
             cursor = data.cursor
-          }
-          else {
+          } else {
             console.error('Failed to fetch posts:', data)
             break
           }
-        }
-        else {
+        } else {
           console.error('HTTP Error:', response.statusText)
           break
         }
@@ -49,11 +50,9 @@ function Page() {
         (b.post.likeCount ?? 0) - (a.post.likeCount ?? 0),
       ).slice(0, 10)
       setPosts(topPosts)
-    }
-    catch (error) {
+    } catch (error) {
       console.error('Error fetching posts:', error)
-    }
-    finally {
+    } finally {
       setLoading(false)
     }
   }
