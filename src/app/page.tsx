@@ -19,6 +19,7 @@ function Page() {
     setLoading(true)
     let allPosts: PostView[] = []
     let cursor = null
+    const uniqueIds = new Set()
 
     try {
       do {
@@ -26,7 +27,9 @@ function Page() {
         if (response.status === 200) {
           const data: ApiResponse = await response.json()
           if (data && data.feed) {
-            allPosts = allPosts.concat(data.feed)
+            const newPosts = data.feed.filter(post => !uniqueIds.has(post.post.cid))
+            newPosts.forEach(post => uniqueIds.add(post.post.cid))
+            allPosts = allPosts.concat(newPosts)
             cursor = data.cursor
           }
           else {
@@ -41,7 +44,6 @@ function Page() {
       } while (cursor)
 
       const filteredPosts = allPosts.filter(item => item.post.author.handle === tempIdentifier)
-
       const topPosts = filteredPosts.sort((a: PostView, b: PostView) => b.post.likeCount - a.post.likeCount).slice(0, 10)
       setPosts(topPosts)
     }
