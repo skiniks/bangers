@@ -14,7 +14,7 @@ interface PostProps {
 
 const Post: React.FC<PostProps> = ({ post, identifier }) => (
   <div className="bg-gray-100 text-gray-800 p-4 mt-4 rounded-lg">
-    <a href={`https://bsky.app/profile/${identifier}/post/${post.uri.split('/').pop()}`} target="_blank" rel="noopener noreferrer">
+    <a href={`https://bsky.app/profile/${identifier}/post/${post.uri.split('/').pop()}`} target="_blank" rel="noopener noreferrer" className="break-words">
       <div className="mb-4">
         https://bsky.app/profile/
         {identifier}
@@ -34,4 +34,4 @@ const Post: React.FC<PostProps> = ({ post, identifier }) => (
   </div>
 )
 
-export default Post
+export default Post;
