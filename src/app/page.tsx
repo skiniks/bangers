@@ -1,165 +1,73 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import type { PostView } from '@atproto/api/dist/client/types/app/bsky/feed/defs'
-import { useBskyAgent } from './hooks/useBskyAgent'
-import LoginForm from '@/components/LoginForm'
+import { useState } from 'react'
 import Post from '@/components/Post'
 import SearchBar from '@/components/SearchBar'
 import WarningBar from '@/components/WarningBar'
+import type { ApiResponse, PostView } from '@/types'
 
-const Page: React.FC = () => {
-  const [agent, agentReady] = useBskyAgent()
-  const [handle, setHandle] = useState<string>('')
-  const [password, setPassword] = useState<string>('')
-  const [tempIdentifier, setTempIdentifier] = useState<string>('')
-  const [identifier, setIdentifier] = useState<string>('')
+function Page() {
+  const [tempIdentifier, setTempIdentifier] = useState('')
   const [posts, setPosts] = useState<PostView[]>([])
-  const [loading, setLoading] = useState<boolean>(false)
-  const [hasFetchedPosts, setHasFetchedPosts] = useState<boolean>(false)
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean | undefined>(undefined)
-
-  useEffect(() => {
-    if (agentReady) {
-      const storedSession = localStorage.getItem('sessionData')
-      setIsLoggedIn(!!storedSession)
-    }
-  }, [agentReady])
-
-  const authenticate = async () => {
-    if (!agent)
-      return
-    setLoading(true)
-    try {
-      await agent.login({ identifier: handle, password })
-      setIsLoggedIn(true)
-    }
-    catch (error) {
-      console.error('Authentication failed:', error)
-      setIsLoggedIn(false)
-    }
-    finally {
-      setLoading(false)
-    }
-  }
+  const [loading, setLoading] = useState(false)
 
   const fetchPosts = async () => {
-    if (!agent || !isLoggedIn) {
-      alert('Please log in first.')
+    if (!tempIdentifier) {
+      alert('Please enter an identifier.')
       return
     }
     setLoading(true)
-    setHasFetchedPosts(false)
-
     let allPosts: PostView[] = []
-    let nextCursor
-    const seenCids = new Set()
+    let cursor = null
 
     try {
       do {
-        const params = {
-          actor: tempIdentifier,
-          ...(nextCursor && { cursor: nextCursor }),
-          limit: 100,
-        }
-        const response = await agent.getAuthorFeed(params)
-
-        if (response.success && response.data.feed) {
-          const filteredPosts = response.data.feed.filter((post) => {
-            const isUnique = !seenCids.has(post.post.cid)
-            if (isUnique)
-              seenCids.add(post.post.cid)
-            return isUnique && post.post.author.handle === tempIdentifier
-          })
-
-          allPosts = [...allPosts, ...filteredPosts.map(item => ({
-            ...item.post,
-            record: item.post.record,
-          }))]
-          nextCursor = response.data.cursor
+        const response: Response = await fetch(`https://api.bsky.app/xrpc/app.bsky.feed.getAuthorFeed?actor=${tempIdentifier}${cursor ? `&cursor=${cursor}` : ''}`)
+        if (response.status === 200) {
+          const data: ApiResponse = await response.json()
+          if (data && data.feed) {
+            allPosts = allPosts.concat(data.feed)
+            cursor = data.cursor
+          }
+          else {
+            console.error('Failed to fetch posts:', data)
+            break
+          }
         }
         else {
-          console.error('Fetch posts failed:', response)
+          console.error('HTTP Error:', response.statusText)
           break
         }
-      } while (nextCursor)
+      } while (cursor)
 
-      const sortedPostsData = allPosts.sort((a, b) => (b.likeCount ?? 0) - (a.likeCount ?? 0)).slice(0, 10)
-      setPosts(sortedPostsData)
-      setIdentifier(tempIdentifier)
+      const filteredPosts = allPosts.filter(item => item.post.author.handle === tempIdentifier)
+
+      const topPosts = filteredPosts.sort((a: PostView, b: PostView) => b.post.likeCount - a.post.likeCount).slice(0, 10)
+      setPosts(topPosts)
     }
     catch (error) {
-      console.error('Failed to fetch posts:', error)
+      console.error('Error fetching posts:', error)
     }
     finally {
       setLoading(false)
-      if (allPosts.length > 0)
-        setHasFetchedPosts(true)
     }
-  }
-
-  const logout = () => {
-    localStorage.removeItem('sessionData')
-    setIsLoggedIn(false)
-  }
-
-  const clearPosts = () => {
-    setPosts([])
-    setHasFetchedPosts(false)
-  }
-
-  if (isLoggedIn === undefined) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <div>Loading...</div>
-      </div>
-    )
   }
 
   return (
     <div className="max-w-lg mx-auto mt-8">
       <div className="flex justify-between items-center mb-4">
-        <h1 className="text-5xl font-bold">Bangers</h1>
-        {isLoggedIn && (
-          <button
-            onClick={logout}
-            className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          >
-            Log Out
-          </button>
-        )}
+        <h1 className="text-4xl font-bold text-white">Bangers</h1>
       </div>
-      {!isLoggedIn
-        ? (
-          <LoginForm
-            handle={handle}
-            setHandle={setHandle}
-            password={password}
-            setPassword={setPassword}
-            authenticate={authenticate}
-            loading={loading}
-          />
-          )
-        : (
-          <>
-            <SearchBar
-              tempIdentifier={tempIdentifier}
-              setTempIdentifier={setTempIdentifier}
-              fetchPosts={fetchPosts}
-              loading={loading}
-            />
-            {hasFetchedPosts && posts.length > 0 && (
-              <button
-                onClick={clearPosts}
-                className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-              >
-                Clear
-              </button>
-            )}
-          </>
-          )}
-      {!loading && hasFetchedPosts && posts.length === 0 && <div className="mt-4">No posts found.</div>}
-      {!loading && posts.map((post, index) => <Post key={index} post={post} identifier={identifier} />)}
+      <SearchBar
+        tempIdentifier={tempIdentifier}
+        setTempIdentifier={setTempIdentifier}
+        fetchPosts={fetchPosts}
+        loading={loading}
+      />
+      {!loading && posts.length > 0 && posts.map((item, index) => (
+        <Post key={index} post={item.post} identifier={item.post.author.handle} />
+      ))}
+      {posts.length === 0 && !loading && <div className="mt-4 text-center">No posts found.</div>}
       <WarningBar />
     </div>
   )
