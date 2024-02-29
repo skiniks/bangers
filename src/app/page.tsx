@@ -1,16 +1,16 @@
 'use client'
 
 import { useState } from 'react'
-import Post from '@/components/Post'
-import SearchBar from '@/components/SearchBar'
-import WarningBar from '@/components/WarningBar'
-import type { ApiResponse, PostView } from '@/types'
+import type { OutputSchema } from '@atproto/api/dist/client/types/app/bsky/feed/getAuthorFeed'
+import Post from '@/app/_components/Post'
+import SearchBar from '@/app/_components/SearchBar'
+import WarningBar from '@/app/_components/WarningBar'
 
 function Page() {
   const [tempIdentifier, setTempIdentifier] = useState('')
-  const [posts, setPosts] = useState<PostView[]>([])
+  const [posts, setPosts] = useState<OutputSchema['feed']>([])
   const [loading, setLoading] = useState(false)
-  const [hasSearched, setHasSearched] = useState(false)
+  const [hasSearched] = useState(false)
 
   const fetchPosts = async () => {
     if (!tempIdentifier) {
@@ -18,8 +18,7 @@ function Page() {
       return
     }
     setLoading(true)
-    setHasSearched(true)
-    let allPosts: PostView[] = []
+    let allPosts: OutputSchema['feed'] = []
     let cursor = null
     const uniqueIds = new Set()
 
@@ -27,7 +26,7 @@ function Page() {
       do {
         const response: Response = await fetch(`https://api.bsky.app/xrpc/app.bsky.feed.getAuthorFeed?actor=${tempIdentifier}${cursor ? `&cursor=${cursor}` : ''}`)
         if (response.status === 200) {
-          const data: ApiResponse = await response.json()
+          const data: OutputSchema = await response.json()
           if (data && data.feed) {
             const newPosts = data.feed.filter(post => !uniqueIds.has(post.post.cid))
             newPosts.forEach(post => uniqueIds.add(post.post.cid))
@@ -46,7 +45,9 @@ function Page() {
       } while (cursor)
 
       const filteredPosts = allPosts.filter(item => item.post.author.handle === tempIdentifier)
-      const topPosts = filteredPosts.sort((a: PostView, b: PostView) => b.post.likeCount - a.post.likeCount).slice(0, 10)
+      const topPosts = filteredPosts.sort((a, b) =>
+        (b.post.likeCount ?? 0) - (a.post.likeCount ?? 0),
+      ).slice(0, 10)
       setPosts(topPosts)
     }
     catch (error) {

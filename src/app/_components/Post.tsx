@@ -1,9 +1,9 @@
-import LikeIcon from '@/components/LikeIcon'
-import RepostIcon from '@/components/RepostIcon'
+import type { FeedViewPost } from '@atproto/api/dist/client/types/app/bsky/feed/defs'
+import LikeIcon from '@/app/_components/LikeIcon'
+import RepostIcon from '@/app/_components/RepostIcon'
 import { getElapsedTime } from '@/lib/utils'
-import type { PostProps } from '@/types'
 
-const Post: React.FC<PostProps> = ({ post }) => {
+const Post: React.FC<FeedViewPost> = ({ post }) => {
   const postId = post.uri.split('/').pop()
   const postUrl = `https://bsky.app/profile/${post.author.handle}/post/${postId}`
 
