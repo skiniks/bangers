@@ -11,14 +11,16 @@ function Page() {
   const [posts, setPosts] = useState<OutputSchema['feed']>([])
   const [loading, setLoading] = useState(false)
   const [hasSearched] = useState(false)
+  const [message, setMessage] = useState('')
 
   const fetchPosts = async () => {
     if (!tempIdentifier) {
-      alert('Please enter an identifier.')
+      setMessage('Please enter an identifier.')
       return
     }
+    setMessage('')
     setLoading(true)
-    let allPosts: OutputSchema['feed'] = []
+    const allPosts: OutputSchema['feed'] = []
     let cursor = null
     const uniqueIds = new Set()
 
@@ -33,26 +35,28 @@ function Page() {
                 uniqueIds.add(post.post.cid)
                 allPosts.push(post)
               }
-            });
+            })
             cursor = data.cursor
-          } else {
+          }
+          else {
             console.error('Failed to fetch posts:', data)
             break
           }
-        } else {
+        }
+        else {
           console.error('HTTP Error:', response.statusText)
           break
         }
       } while (cursor)
 
       const filteredPosts = allPosts.filter(item => item.post.author.handle === tempIdentifier)
-      const topPosts = filteredPosts.sort((a, b) =>
-        (b.post.likeCount ?? 0) - (a.post.likeCount ?? 0),
-      ).slice(0, 10)
+      const topPosts = filteredPosts.sort((a, b) => (b.post.likeCount ?? 0) - (a.post.likeCount ?? 0)).slice(0, 10)
       setPosts(topPosts)
-    } catch (error) {
+    }
+    catch (error) {
       console.error('Error fetching posts:', error)
-    } finally {
+    }
+    finally {
       setLoading(false)
     }
   }
@@ -62,18 +66,14 @@ function Page() {
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-4xl font-bold text-white">Bangers</h1>
       </div>
-      <SearchBar
-        tempIdentifier={tempIdentifier}
-        setTempIdentifier={setTempIdentifier}
-        fetchPosts={fetchPosts}
-        loading={loading}
-      />
-      {!loading && hasSearched && posts.length === 0 && (
-        <div className="mt-4 text-center">No posts found.</div>
+      <SearchBar tempIdentifier={tempIdentifier} setTempIdentifier={setTempIdentifier} fetchPosts={fetchPosts} loading={loading} />
+      {message && (
+        <div className="mt-4 bg-red-100 text-red-700 px-4 py-3 rounded relative" role="alert">
+          {message}
+        </div>
       )}
-      {!loading && posts.map((item, index) => (
-        <Post key={index} post={item.post} identifier={item.post.author.handle} />
-      ))}
+      {!loading && hasSearched && posts.length === 0 && <div className="mt-4 text-center">No posts found.</div>}
+      {!loading && posts.map((item, index) => <Post key={index} post={item.post} identifier={item.post.author.handle} />)}
       <WarningBar />
     </div>
   )
