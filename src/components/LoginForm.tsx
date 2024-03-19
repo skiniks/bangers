@@ -7,14 +7,7 @@ interface LoginFormProps {
   loading: boolean
 }
 
-const LoginForm: React.FC<LoginFormProps> = ({
-  handle,
-  setHandle,
-  password,
-  setPassword,
-  authenticate,
-  loading,
-}) => {
+const LoginForm: React.FC<LoginFormProps> = ({ handle, setHandle, password, setPassword, authenticate, loading }) => {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     authenticate()
@@ -40,11 +33,7 @@ const LoginForm: React.FC<LoginFormProps> = ({
         required
         autoComplete="current-password"
       />
-      <button
-        type="submit"
-        disabled={loading}
-        className="w-full bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-      >
+      <button type="submit" disabled={loading} className="w-full bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
         {loading ? 'Logging in...' : 'Login'}
       </button>
     </form>

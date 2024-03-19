@@ -10,9 +10,7 @@ const Post: React.FC<FeedViewPost> = ({ post }) => {
   return (
     <div className="bg-gray-100 text-gray-800 p-4 mt-4 rounded-lg">
       <a href={postUrl} target="_blank" rel="noopener noreferrer" className="break-words">
-        <div className="mb-4">
-          {postUrl}
-        </div>
+        <div className="mb-4">{postUrl}</div>
         <div className="flex justify-between items-center">
           <div className="flex items-center">
             <LikeIcon />
