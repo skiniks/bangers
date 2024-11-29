@@ -4,7 +4,7 @@ import type { OutputSchema } from '@atproto/api/dist/client/types/app/bsky/feed/
 import { useQuery } from '@tanstack/react-query'
 import { Loader2 } from 'lucide-react'
 import { useState } from 'react'
-import PostList from '../../posts/components/PostList'
+import PostList from '@/features/posts/components/PostList'
 import { fetchPostsFromBsky } from '@/features/posts/actions'
 
 export default function SearchForm() {
