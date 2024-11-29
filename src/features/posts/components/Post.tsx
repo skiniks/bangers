@@ -93,7 +93,7 @@ function ImagesEmbed({ images }: { images: ImageView[] }) {
       }}
     >
       {images.map((image: ImageView) => (
-        <div key={image.thumb} className="relative aspect-square overflow-hidden rounded-lg bg-gray-100">
+        <div key={image.thumb} className="relative aspect-square overflow-hidden rounded-lg bg-gray-800/50">
           <img src={image.thumb} alt={image.alt || ''} className="h-full w-full object-cover" />
           {image.alt && <div className="absolute bottom-0 left-0 right-0 bg-black/50 p-1 text-xs text-white">{image.alt}</div>}
         </div>
@@ -104,7 +104,7 @@ function ImagesEmbed({ images }: { images: ImageView[] }) {
 
 function QuotePostEmbed({ record }: { record: AppBskyFeedDefs.PostView }) {
   return (
-    <div className="mt-2 rounded-lg border border-gray-200 p-3">
+    <div className="mt-2 rounded-lg border border-white/[0.08] bg-gray-800/50 p-3">
       <div className="flex items-center gap-2">
         {record.author.avatar && <img src={record.author.avatar} alt={record.author.handle} className="h-5 w-5 rounded-full" />}
         <span className="font-medium">{record.author.displayName || record.author.handle}</span>
@@ -121,13 +121,13 @@ export default function Post({ post }: PostProps) {
   const postContent = isRepost && typeof post.record === 'object' && 'subject' in post.record ? post.record.subject : post.record
 
   return (
-    <div className="bg-gray-100 text-gray-800 p-4 mt-4 rounded-lg">
+    <div className="bg-gray-800/30 backdrop-blur-sm text-gray-100 p-4 mt-4 rounded-xl border border-white/[0.08] shadow-xl inset-shadow-sm inset-shadow-white/5">
       <a href={postUrl} target="_blank" rel="noopener noreferrer" className="block">
         <div className="flex items-center gap-3 mb-2">
-          {post.author.avatar && <img src={post.author.avatar} alt={post.author.handle} className="h-10 w-10 rounded-full" />}
+          {post.author.avatar && <img src={post.author.avatar} alt={post.author.handle} className="h-10 w-10 rounded-full ring-2 ring-white/10" />}
           <div>
             <div className="font-medium">{post.author.displayName || post.author.handle}</div>
-            <div className="text-sm text-gray-500">
+            <div className="text-sm text-gray-400">
               @
               {post.author.handle}
             </div>
@@ -136,11 +136,11 @@ export default function Post({ post }: PostProps) {
 
         <PostContent record={postContent as Record<string, unknown>} embed={post.embed} />
 
-        <div className="flex justify-between items-center text-gray-500">
+        <div className="flex justify-between items-center text-gray-400">
           <div className="flex items-center">
-            <Icon icon="mdi:heart" className="w-5 h-5 text-red-500" />
+            <Icon icon="mdi:heart" className="w-5 h-5 text-red-400" />
             <span className="ml-1 mr-2">{post.likeCount || 0}</span>
-            <Icon icon="mdi:repeat" className="w-5 h-5 text-green-600" />
+            <Icon icon="mdi:repeat" className="w-5 h-5 text-green-400" />
             <span className="ml-1">{post.repostCount || 0}</span>
           </div>
           <div>{getElapsedTime(post.indexedAt)}</div>
