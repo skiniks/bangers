@@ -6,7 +6,6 @@ Find your best Bluesky posts, ranked by engagement. Discover and showcase your m
 
 - 🔍 Search any Bluesky handle
 - 📊 Posts ranked by engagement score
-- ❤️ View likes and reposts
 - 🖼️ Media previews and embeds
 - ⚡ Fast and cached results
 
