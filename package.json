@@ -3,6 +3,9 @@
   "type": "module",
   "version": "1.0.0",
   "private": true,
+  "description": "Find your best Bluesky posts, ranked by engagement. A web app that helps you discover and showcase your most impactful content through likes, reposts, and overall community interaction.",
+  "author": "Ryan Skinner <hello@ryanskinner.com> (https://github.com/skiniks)",
+  "license": "MIT",
   "scripts": {
     "dev": "next dev --turbo",
     "build": "next build",
