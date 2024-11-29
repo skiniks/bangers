@@ -7,7 +7,7 @@ interface LoginFormProps {
   loading: boolean
 }
 
-const LoginForm: React.FC<LoginFormProps> = ({ handle, setHandle, password, setPassword, authenticate, loading }) => {
+export default function LoginForm({ handle, setHandle, password, setPassword, authenticate, loading }: LoginFormProps) {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     authenticate()
@@ -39,5 +39,3 @@ const LoginForm: React.FC<LoginFormProps> = ({ handle, setHandle, password, setP
     </form>
   )
 }
-
-export default LoginForm

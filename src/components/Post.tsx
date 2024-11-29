@@ -3,7 +3,12 @@ import LikeIcon from '@/components/LikeIcon'
 import RepostIcon from '@/components/RepostIcon'
 import { getElapsedTime } from '@/lib/utils'
 
-const Post: React.FC<FeedViewPost> = ({ post }) => {
+interface PostProps {
+  post: FeedViewPost['post']
+  identifier: string
+}
+
+export default function Post({ post }: PostProps) {
   const postId = post.uri.split('/').pop()
   const postUrl = `https://bsky.app/profile/${post.author.handle}/post/${postId}`
 
@@ -24,5 +29,3 @@ const Post: React.FC<FeedViewPost> = ({ post }) => {
     </div>
   )
 }
-
-export default Post

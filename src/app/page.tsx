@@ -1,12 +1,12 @@
 'use client'
 
-import { useState } from 'react'
 import type { OutputSchema } from '@atproto/api/dist/client/types/app/bsky/feed/getAuthorFeed'
+import { useState } from 'react'
 import Post from '@/components/Post'
 import SearchBar from '@/components/SearchBar'
 import WarningBar from '@/components/WarningBar'
 
-function Page() {
+export default function Page() {
   const [tempIdentifier, setTempIdentifier] = useState('')
   const [posts, setPosts] = useState<OutputSchema['feed']>([])
   const [loading, setLoading] = useState(false)
@@ -73,10 +73,8 @@ function Page() {
         </div>
       )}
       {!loading && hasSearched && posts.length === 0 && <div className="mt-4 text-center">No posts found.</div>}
-      {!loading && posts.map((item, index) => <Post key={index} post={item.post} identifier={item.post.author.handle} />)}
+      {!loading && posts.map(item => <Post key={item.post.cid} post={item.post} identifier={item.post.author.handle} />)}
       <WarningBar />
     </div>
   )
 }
-
-export default Page
