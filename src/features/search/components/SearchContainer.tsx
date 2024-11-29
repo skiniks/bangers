@@ -71,8 +71,6 @@ export default function SearchContainer({ featureCard }: { featureCard: React.Re
     setCurrentPage(page)
   }, [])
 
-  const lastUpdatedText = data?.lastUpdated ? `Last updated ${new Date(data.lastUpdated).toLocaleTimeString()}` : null
-
   return (
     <>
       <AnimatePresence mode="wait">
@@ -140,8 +138,6 @@ export default function SearchContainer({ featureCard }: { featureCard: React.Re
 
           {!isLoading && (
             <motion.div key="content" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.3, ease: 'easeInOut', delay: 0.1 }}>
-              {lastUpdatedText && <div className="text-center text-sm text-gray-500 mb-4">{lastUpdatedText}</div>}
-
               {isError && (
                 <div className="mt-4 p-4 bg-red-900/50 border border-red-500/50 text-red-200 rounded-md">
                   Error:

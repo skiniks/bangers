@@ -6,6 +6,7 @@ import { unstable_cache } from 'next/cache'
 import { headers } from 'next/headers'
 
 const REVALIDATE_TTL = 60 * 5
+const POSTS_PER_PAGE = 20
 
 interface PostAnalysis {
   engagement: number
@@ -21,6 +22,15 @@ interface AnalyzedPost {
   analysis: PostAnalysis
   score: number
 }
+
+interface PaginatedResponse {
+  posts: OutputSchema['feed']
+  totalPages: number
+  currentPage: number
+  lastUpdated: string
+}
+
+const analyzedPostsCache = new Map<string, AnalyzedPost[]>()
 
 function analyzePost(post: OutputSchema['feed'][0]): AnalyzedPost {
   const analysis: PostAnalysis = {
@@ -76,16 +86,28 @@ async function fetchFromBskyAPI(handle: string) {
   }
 }
 
-const POSTS_PER_PAGE = 20
+async function getAnalyzedPosts(handle: string): Promise<AnalyzedPost[]> {
+  const cacheKey = `analyzed:${handle}`
 
-export async function fetchPostsFromBsky(handle: string, page = 1) {
-  const cached = await unstable_cache(
-    async (): Promise<{
-      posts: OutputSchema['feed']
-      totalPages: number
-      currentPage: number
-      lastUpdated: string
-    }> => {
+  if (analyzedPostsCache.has(cacheKey)) {
+    return analyzedPostsCache.get(cacheKey)!
+  }
+
+  const allPosts = await fetchFromBskyAPI(handle)
+  const analyzedPosts = allPosts.map(post => analyzePost(post)).sort((a, b) => b.score - a.score)
+
+  analyzedPostsCache.set(cacheKey, analyzedPosts)
+
+  setTimeout(() => {
+    analyzedPostsCache.delete(cacheKey)
+  }, REVALIDATE_TTL * 1000)
+
+  return analyzedPosts
+}
+
+export async function fetchPostsFromBsky(handle: string, page = 1): Promise<PaginatedResponse> {
+  return unstable_cache(
+    async () => {
       if (!handle) {
         return {
           posts: [],
@@ -96,18 +118,17 @@ export async function fetchPostsFromBsky(handle: string, page = 1) {
       }
 
       try {
-        const allPosts = await fetchFromBskyAPI(handle)
-
-        const analyzedPosts = allPosts.map(post => analyzePost(post)).sort((a, b) => b.score - a.score)
-
+        const analyzedPosts = await getAnalyzedPosts(handle)
         const totalPages = Math.ceil(analyzedPosts.length / POSTS_PER_PAGE)
-        const startIndex = (page - 1) * POSTS_PER_PAGE
+        const normalizedPage = Math.max(1, Math.min(page, totalPages))
+        const startIndex = (normalizedPage - 1) * POSTS_PER_PAGE
+
         const paginatedPosts = analyzedPosts.slice(startIndex, startIndex + POSTS_PER_PAGE).map(({ post }) => ({ post }))
 
         return {
           posts: paginatedPosts,
           totalPages,
-          currentPage: page,
+          currentPage: normalizedPage,
           lastUpdated: new Date().toISOString(),
         }
       }
@@ -122,8 +143,6 @@ export async function fetchPostsFromBsky(handle: string, page = 1) {
       tags: ['posts'],
     },
   )()
-
-  return cached
 }
 
 export async function invalidatePostsCache(_handle: string) {
