@@ -1,8 +1,8 @@
 import type { AppBskyEmbedImages, AppBskyEmbedRecord, AppBskyEmbedRecordWithMedia, AppBskyFeedDefs } from '@atproto/api'
 import type { FeedViewPost } from '@atproto/api/dist/client/types/app/bsky/feed/defs'
-import RepostIcon from '../../../shared/components/icons/RepostIcon'
-import LikeIcon from '../../../shared/components/icons/LikeIcon'
-import { getElapsedTime } from '../../../shared/utils/time'
+import { getElapsedTime } from '@/shared/utils/time'
+import LikeIcon from '@/shared/components/icons/LikeIcon'
+import RepostIcon from '@/shared/components/icons/RepostIcon'
 
 interface PostProps {
   post: FeedViewPost['post']
@@ -104,13 +104,6 @@ function ImagesEmbed({ images }: { images: ImageView[] }) {
 }
 
 function QuotePostEmbed({ record }: { record: AppBskyFeedDefs.PostView }) {
-  const isBlocked = record.$type === 'app.bsky.feed.defs#blockedPost'
-  const isNotFound = record.$type === 'app.bsky.feed.defs#notFoundPost'
-  const isMuted = record.author.viewer?.muted
-
-  if (isBlocked || isNotFound || isMuted)
-    return null
-
   return (
     <div className="mt-2 rounded-lg border border-gray-200 p-3">
       <div className="flex items-center gap-2">
