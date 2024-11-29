@@ -5,7 +5,7 @@ interface SearchBarProps {
   loading: boolean
 }
 
-function SearchBar({ tempIdentifier, setTempIdentifier, fetchPosts, loading }: SearchBarProps) {
+export default function SearchBar({ tempIdentifier, setTempIdentifier, fetchPosts, loading }: SearchBarProps) {
   return (
     <div>
       <input
@@ -21,5 +21,3 @@ function SearchBar({ tempIdentifier, setTempIdentifier, fetchPosts, loading }: S
     </div>
   )
 }
-
-export default SearchBar
