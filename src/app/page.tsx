@@ -2,7 +2,7 @@ import SearchContainer from '@/features/search/components/SearchContainer'
 import Nav from '@/shared/components/Nav'
 import { Icon } from '@iconify/react'
 
-export const maxDuration = 60
+export const maxDuration = 300
 
 export default function Page() {
   const featureCard = (
