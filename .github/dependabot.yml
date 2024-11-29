@@ -1,0 +1,19 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    versioning-strategy: auto
+    reviewers:
+      - project-owner
+    groups:
+      dependencies:
+        patterns:
+          - '*'
+    open-pull-requests-limit: 10
+    allow:
+      - dependency-type: all
+    commit-message:
+      prefix: chore
+      include: scope
