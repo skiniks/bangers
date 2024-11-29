@@ -1,8 +1,7 @@
 import type { AppBskyEmbedImages, AppBskyEmbedRecord, AppBskyEmbedRecordWithMedia, AppBskyFeedDefs } from '@atproto/api'
 import type { FeedViewPost } from '@atproto/api/dist/client/types/app/bsky/feed/defs'
 import { getElapsedTime } from '@/shared/utils/time'
-import LikeIcon from '@/shared/components/icons/LikeIcon'
-import RepostIcon from '@/shared/components/icons/RepostIcon'
+import { Icon } from '@iconify/react'
 
 interface PostProps {
   post: FeedViewPost['post']
@@ -118,9 +117,7 @@ function QuotePostEmbed({ record }: { record: AppBskyFeedDefs.PostView }) {
 export default function Post({ post }: PostProps) {
   const postId = post.uri.split('/').pop()
   const postUrl = `https://bsky.app/profile/${post.author.handle}/post/${postId}`
-
   const isRepost = post.record && typeof post.record === 'object' && '$type' in post.record && post.record.$type === 'app.bsky.feed.defs#repostRecord'
-
   const postContent = isRepost && typeof post.record === 'object' && 'subject' in post.record ? post.record.subject : post.record
 
   return (
@@ -141,9 +138,9 @@ export default function Post({ post }: PostProps) {
 
         <div className="flex justify-between items-center text-gray-500">
           <div className="flex items-center">
-            <LikeIcon />
+            <Icon icon="mdi:heart" className="w-5 h-5" />
             <span className="ml-1 mr-2">{post.likeCount || 0}</span>
-            <RepostIcon />
+            <Icon icon="mdi:repeat" className="w-5 h-5" />
             <span className="ml-1">{post.repostCount || 0}</span>
           </div>
           <div>{getElapsedTime(post.indexedAt)}</div>
