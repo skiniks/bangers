@@ -1,26 +1,32 @@
 'use client'
 
 import type { OutputSchema } from '@atproto/api/dist/client/types/app/bsky/feed/getAuthorFeed'
-import { fetchPosts } from '@/app/actions'
-import { useState, useTransition } from 'react'
+import { fetchPostsFromBsky } from '@/app/actions'
+import { useQuery } from '@tanstack/react-query'
+import { Loader2 } from 'lucide-react'
+import { useState } from 'react'
 import PostList from '../post/PostList'
 
 export default function SearchForm() {
-  const [isPending, startTransition] = useTransition()
-  const [posts, setPosts] = useState<OutputSchema['feed']>([])
   const [handle, setHandle] = useState('')
-  const [hasSearched, setHasSearched] = useState(false)
+  const [debouncedHandle, setDebouncedHandle] = useState('')
 
-  async function handleSubmit(e: React.FormEvent) {
+  const {
+    data: posts,
+    isLoading,
+    isError,
+    error,
+  } = useQuery<OutputSchema['feed'], Error>({
+    queryKey: ['posts', debouncedHandle],
+    queryFn: () => fetchPostsFromBsky(debouncedHandle),
+    enabled: Boolean(debouncedHandle),
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 10,
+  })
+
+  function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    if (!handle)
-      return
-
-    setHasSearched(true)
-    startTransition(async () => {
-      const newPosts = await fetchPosts(handle)
-      setPosts(newPosts)
-    })
+    setDebouncedHandle(handle)
   }
 
   return (
@@ -33,14 +39,36 @@ export default function SearchForm() {
           placeholder="Enter user handle"
           className="w-full mb-2 form-input px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-gray-800"
         />
-        <button type="submit" disabled={isPending} className="w-full bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-          {isPending ? 'Loading...' : 'Fetch Posts'}
+        <button
+          type="submit"
+          disabled={isLoading || !handle}
+          className="w-full bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {isLoading
+            ? (
+                <>
+                  <Loader2 className="animate-spin mr-2" size={20} />
+                  Loading posts...
+                </>
+              )
+            : (
+                'Fetch Posts'
+              )}
         </button>
       </form>
 
-      {posts.length === 0 && hasSearched && !isPending && <div className="mt-4 text-center">No posts found.</div>}
+      {isLoading && <p className="text-sm text-gray-400 mt-2 text-center">This may take a moment if the user has many posts to analyze</p>}
 
-      <PostList posts={posts} />
+      {isError && (
+        <div className="mt-4 p-4 bg-red-50 text-red-700 rounded-md">
+          Error:
+          {error.message}
+        </div>
+      )}
+
+      {!isLoading && !isError && posts?.length === 0 && debouncedHandle && <div className="mt-4 text-center">No posts found.</div>}
+
+      {posts && <PostList posts={posts} />}
     </>
   )
 }
