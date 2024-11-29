@@ -2,6 +2,8 @@ import SearchContainer from '@/features/search/components/SearchContainer'
 import Nav from '@/shared/components/Nav'
 import { Icon } from '@iconify/react'
 
+export const maxDuration = 60
+
 export default function Page() {
   const featureCard = (
     <div className="relative bg-linear-to-br/oklch from-gray-900/80 to-gray-800/80 backdrop-blur-xl rounded-3xl mb-8 shadow-xl inset-shadow-sm inset-shadow-white/5 overflow-hidden">
