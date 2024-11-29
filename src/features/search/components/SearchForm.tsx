@@ -1,6 +1,8 @@
 import LoadingButton from '@/shared/components/LoadingButton'
 import { Icon } from '@iconify/react'
+import { AnimatePresence, motion } from 'framer-motion'
 import { useState } from 'react'
+import { type IsValidHandle, validateHandle } from '../utils/strings/handles'
 
 interface SearchFormProps {
   handle: string
@@ -14,20 +16,37 @@ export default function SearchForm({ handle, setHandle, onSubmit, onClear, isLoa
   const [error, setError] = useState<string>('')
   const [isDirty, setIsDirty] = useState(false)
 
-  function validateHandle(value: string): boolean {
+  function getValidationError(results: IsValidHandle): string {
+    if (!results.handleChars)
+      return 'Handle can only contain letters, numbers, and hyphens'
+    if (!results.hyphenStartOrEnd)
+      return 'Handle cannot start or end with a hyphen'
+    if (!results.frontLength)
+      return 'Handle must be at least 3 characters'
+    if (!results.totalLength)
+      return 'Handle is too long'
+    return ''
+  }
+
+  function validateHandleInput(value: string): boolean {
     if (!value) {
       setError('')
       return false
     }
 
-    if (value.startsWith('.')) {
-      setError('Handle must start with a letter or number')
+    const parts = value.split('.')
+    if (parts.length < 2) {
+      setError('Invalid handle format. Example: user.bsky.social')
       return false
     }
 
-    const handleRegex = /^[a-z0-9][a-z0-9-]*\.[a-z0-9][a-z0-9-]*(?:\.[a-z0-9][a-z0-9-]*)*$/i
-    if (!handleRegex.test(value)) {
-      setError('Invalid handle format. Example: user.bsky.social')
+    const handlePart = parts[0]
+    const domain = parts.slice(1).join('.')
+
+    const results = validateHandle(handlePart, domain)
+
+    if (!results.overall) {
+      setError(getValidationError(results))
       return false
     }
 
@@ -39,15 +58,15 @@ export default function SearchForm({ handle, setHandle, onSubmit, onClear, isLoa
     e.preventDefault()
     setIsDirty(true)
 
-    if (validateHandle(handle)) {
+    if (validateHandleInput(handle)) {
       onSubmit()
     }
   }
 
   function handleInputChange(value: string) {
-    setHandle(value)
+    setHandle(value.toLowerCase())
     if (isDirty) {
-      validateHandle(value)
+      validateHandleInput(value)
     }
   }
 
@@ -103,11 +122,21 @@ export default function SearchForm({ handle, setHandle, onSubmit, onClear, isLoa
           disabled={isLoading || !isValid}
           className="bg-green-500 hover:bg-green-600 text-white font-medium px-6 h-12
             rounded-lg focus:outline-hidden focus:ring-2 focus:ring-green-500/50
-            flex items-center justify-center gap-2 min-w-[120px]
+            flex items-center justify-center gap-2 w-[144px]
             disabled:opacity-50 disabled:cursor-not-allowed
             transition-all"
         >
-          {isLoading ? <LoadingButton /> : 'Fetch Posts'}
+          <AnimatePresence mode="wait">
+            {isLoading
+              ? (
+                  <LoadingButton key="loading" />
+                )
+              : (
+                  <motion.span key="text" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                    Fetch Posts
+                  </motion.span>
+                )}
+          </AnimatePresence>
         </button>
       </form>
       {error && <div className="text-red-400 text-sm px-2">{error}</div>}
