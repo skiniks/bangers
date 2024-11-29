@@ -1,11 +1,11 @@
 'use client'
 
 import type { OutputSchema } from '@atproto/api/dist/client/types/app/bsky/feed/getAuthorFeed'
-import { fetchPostsFromBsky } from '@/app/actions'
 import { useQuery } from '@tanstack/react-query'
 import { Loader2 } from 'lucide-react'
 import { useState } from 'react'
-import PostList from '../post/PostList'
+import PostList from '../../posts/components/PostList'
+import { fetchPostsFromBsky } from '@/features/posts/actions'
 
 export default function SearchForm() {
   const [handle, setHandle] = useState('')
@@ -46,10 +46,10 @@ export default function SearchForm() {
         >
           {isLoading
             ? (
-                <>
-                  <Loader2 className="animate-spin mr-2" size={20} />
-                  Loading posts...
-                </>
+              <>
+                <Loader2 className="animate-spin mr-2" size={20} />
+                Loading posts...
+              </>
               )
             : (
                 'Fetch Posts'

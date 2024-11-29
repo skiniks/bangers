@@ -1,8 +1,8 @@
 import type { AppBskyEmbedImages, AppBskyEmbedRecord, AppBskyEmbedRecordWithMedia, AppBskyFeedDefs } from '@atproto/api'
 import type { FeedViewPost } from '@atproto/api/dist/client/types/app/bsky/feed/defs'
-import LikeIcon from '@/components/icons/LikeIcon'
-import RepostIcon from '@/components/icons/RepostIcon'
-import { getElapsedTime } from '@/lib/utils'
+import RepostIcon from '../../../shared/components/icons/RepostIcon'
+import LikeIcon from '../../../shared/components/icons/LikeIcon'
+import { getElapsedTime } from '../../../shared/utils/time'
 
 interface PostProps {
   post: FeedViewPost['post']
@@ -94,10 +94,7 @@ function ImagesEmbed({ images }: { images: ImageView[] }) {
       }}
     >
       {images.map((image: ImageView) => (
-        <div
-          key={image.thumb}
-          className="relative aspect-square overflow-hidden rounded-lg bg-gray-100"
-        >
+        <div key={image.thumb} className="relative aspect-square overflow-hidden rounded-lg bg-gray-100">
           <img src={image.thumb} alt={image.alt || ''} className="h-full w-full object-cover" />
           {image.alt && <div className="absolute bottom-0 left-0 right-0 bg-black/50 p-1 text-xs text-white">{image.alt}</div>}
         </div>
