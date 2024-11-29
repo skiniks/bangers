@@ -138,9 +138,9 @@ export default function Post({ post }: PostProps) {
 
         <div className="flex justify-between items-center text-gray-500">
           <div className="flex items-center">
-            <Icon icon="mdi:heart" className="w-5 h-5" />
+            <Icon icon="mdi:heart" className="w-5 h-5 text-red-500" />
             <span className="ml-1 mr-2">{post.likeCount || 0}</span>
-            <Icon icon="mdi:repeat" className="w-5 h-5" />
+            <Icon icon="mdi:repeat" className="w-5 h-5 text-green-600" />
             <span className="ml-1">{post.repostCount || 0}</span>
           </div>
           <div>{getElapsedTime(post.indexedAt)}</div>

@@ -22,9 +22,9 @@ export default function SearchContainer({ featureCard }: { featureCard: React.Re
     queryKey: ['posts', debouncedHandle],
     queryFn: () => fetchPostsFromBsky(debouncedHandle),
     enabled: Boolean(debouncedHandle),
-    staleTime: 1000 * 60 * 5, // Data considered fresh for 5 minutes
-    gcTime: 1000 * 60 * 30, // Keep unused data in cache for 30 minutes
-    retry: 2, // Retry failed requests twice
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 30,
+    retry: 2,
     refetchOnWindowFocus: false,
   })
 
@@ -39,10 +39,16 @@ export default function SearchContainer({ featureCard }: { featureCard: React.Re
       </AnimatePresence>
 
       <motion.div layout transition={{ type: 'spring', bounce: 0.2 }} className="bg-gray-800/30 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-gray-700/50">
-        <div className="mb-4">
-          <h2 className="text-lg font-medium text-white mb-1">Start Exploring</h2>
-          <p className="text-gray-400 text-sm">Enter a Bluesky handle to find their best content</p>
-        </div>
+        <AnimatePresence>
+          {!hasSearched && (
+            <motion.div initial={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.2 }} className="flex items-center gap-3 mb-4 overflow-hidden">
+              <h2 className="text-lg font-medium text-white">Start Exploring</h2>
+              <div className="h-4 w-px bg-gray-700" />
+              <p className="text-gray-400 text-sm">Enter a Bluesky handle to find their best content</p>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         <SearchForm
           handle={handle}
           setHandle={setHandle}

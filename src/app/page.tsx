@@ -4,39 +4,44 @@ import { Icon } from '@iconify/react'
 
 export default function Page() {
   const featureCard = (
-    <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur rounded-2xl mb-8 shadow-xl border border-gray-700/50 overflow-hidden">
-      <div className="p-8">
-        <div className="flex flex-col gap-6">
-          <h2 className="text-3xl font-bold text-white">
-            Find Your Best Content
+    <div className="relative bg-[#1C1C1E]/80 backdrop-blur-xl rounded-3xl mb-8 shadow-2xl overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5" />
+
+      <div className="relative px-8 pt-12 pb-8">
+        <div className="flex flex-col gap-4">
+          <h2 className="text-4xl font-medium tracking-tight text-white">
+            Find Your Best
+            {' '}
+            <span className="text-blue-400">Posts</span>
           </h2>
-          <p className="text-gray-300 leading-relaxed text-lg">
-            Discover your most engaging Bluesky posts, ranked by impact and reach.
-          </p>
+          <p className="text-gray-400 text-lg font-light">Discover your most engaging Bluesky posts, ranked by impact and reach.</p>
         </div>
       </div>
-      <div className="border-t border-gray-700/50">
-        <div className="grid grid-cols-3 divide-x divide-gray-700/50">
-          <div className="p-4 text-center">
-            <Icon
-              icon="mdi:heart"
-              className="inline w-6 h-6 text-red-400 mb-2"
-            />
-            <div className="text-gray-300 text-sm">Most Liked</div>
+
+      <div className="relative mt-4 bg-[#2C2C2E]/50 border-t border-white/[0.08]">
+        <div className="grid grid-cols-3">
+          <div className="p-6 flex flex-col items-center gap-3 group">
+            <div className="relative">
+              <div className="absolute inset-0 bg-red-400/20 blur-xl rounded-full group-hover:bg-red-400/30 transition-all" />
+              <Icon icon="mdi:heart" className="relative w-7 h-7 text-red-400 group-hover:scale-110 transition-transform" />
+            </div>
+            <div className="text-gray-300 text-sm font-medium">Most Liked</div>
           </div>
-          <div className="p-4 text-center">
-            <Icon
-              icon="mdi:repeat"
-              className="inline w-6 h-6 text-green-400 mb-2"
-            />
-            <div className="text-gray-300 text-sm">Most Shared</div>
+
+          <div className="p-6 flex flex-col items-center gap-3 group border-l border-r border-white/[0.08]">
+            <div className="relative">
+              <div className="absolute inset-0 bg-green-400/20 blur-xl rounded-full group-hover:bg-green-400/30 transition-all" />
+              <Icon icon="twemoji:fire" className="relative w-7 h-7 text-green-400 group-hover:scale-110 transition-transform" />
+            </div>
+            <div className="text-gray-300 text-sm font-medium">Most Shared</div>
           </div>
-          <div className="p-4 text-center">
-            <Icon
-              icon="mdi:trophy"
-              className="inline w-6 h-6 text-amber-400 mb-2"
-            />
-            <div className="text-gray-300 text-sm">Top 10</div>
+
+          <div className="p-6 flex flex-col items-center gap-3 group">
+            <div className="relative">
+              <div className="absolute inset-0 bg-amber-400/20 blur-xl rounded-full group-hover:bg-amber-400/30 transition-all" />
+              <Icon icon="twemoji:trophy" className="relative w-7 h-7 text-amber-400 group-hover:scale-110 transition-transform" />
+            </div>
+            <div className="text-gray-300 text-sm font-medium">Top 10</div>
           </div>
         </div>
       </div>
