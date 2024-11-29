@@ -3,18 +3,20 @@
 import type { OutputSchema } from '@atproto/api/dist/client/types/app/bsky/feed/getAuthorFeed'
 import { fetchPosts } from '@/app/actions'
 import { useState, useTransition } from 'react'
-import PostList from './PostList'
+import PostList from '../post/PostList'
 
 export default function SearchForm() {
   const [isPending, startTransition] = useTransition()
   const [posts, setPosts] = useState<OutputSchema['feed']>([])
   const [handle, setHandle] = useState('')
+  const [hasSearched, setHasSearched] = useState(false)
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!handle)
       return
 
+    setHasSearched(true)
     startTransition(async () => {
       const newPosts = await fetchPosts(handle)
       setPosts(newPosts)
@@ -36,7 +38,7 @@ export default function SearchForm() {
         </button>
       </form>
 
-      {posts.length === 0 && handle && !isPending && <div className="mt-4 text-center">No posts found.</div>}
+      {posts.length === 0 && hasSearched && !isPending && <div className="mt-4 text-center">No posts found.</div>}
 
       <PostList posts={posts} />
     </>

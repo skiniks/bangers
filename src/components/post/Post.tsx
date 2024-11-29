@@ -1,6 +1,6 @@
 import type { FeedViewPost } from '@atproto/api/dist/client/types/app/bsky/feed/defs'
-import LikeIcon from '@/components/LikeIcon'
-import RepostIcon from '@/components/RepostIcon'
+import LikeIcon from '@/components/icons/LikeIcon'
+import RepostIcon from '@/components/icons/RepostIcon'
 import { getElapsedTime } from '@/lib/utils'
 
 interface PostProps {

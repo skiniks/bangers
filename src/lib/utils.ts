@@ -1,4 +1,4 @@
-export function getElapsedTime(createdAt: Date) {
+export function getElapsedTime(createdAt: string) {
   const currentTime = new Date()
   const createdAtTime = new Date(createdAt)
   const elapsedTime = currentTime.getTime() - createdAtTime.getTime()
