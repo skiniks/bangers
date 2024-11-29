@@ -9,12 +9,20 @@ export default function Page() {
 
       <div className="relative px-8 pt-12 pb-8">
         <div className="flex flex-col gap-4">
-          <h2 className="text-balance text-4xl font-medium tracking-tight text-white">
+          <h2 className="text-balance text-4xl font-bold tracking-tight text-white">
             Find Your Best
             {' '}
             <span className="bg-linear-to-r/oklch from-blue-400 to-blue-300 text-transparent bg-clip-text">Posts</span>
           </h2>
-          <p className="text-gray-400 text-lg font-light">Discover your most engaging Bluesky posts, ranked by impact and reach.</p>
+          <p className="text-gray-400 text-lg font-light">
+            Discover your most engaging
+            {' '}
+            <a href="https://bsky.app" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 transition-colors ease-fluid font-bold">
+              Bluesky
+            </a>
+            {' '}
+            posts, ranked by community engagement.
+          </p>
         </div>
       </div>
 
@@ -25,7 +33,7 @@ export default function Page() {
               <div className="absolute inset-0 bg-red-400/20 blur-xl rounded-full group-hover:bg-red-400/30 transition-all ease-fluid" />
               <Icon icon="mdi:heart" className="relative w-7 h-7 text-red-400 group-hover:scale-110 transition-all ease-fluid" />
             </div>
-            <div className="text-gray-300 text-sm font-medium">Most Liked</div>
+            <div className="text-gray-300 text-sm font-medium">Likes</div>
           </div>
 
           <div className="p-6 flex flex-col items-center gap-3 group border-l border-r border-white/[0.08]">
@@ -33,15 +41,15 @@ export default function Page() {
               <div className="absolute inset-0 bg-green-400/20 blur-xl rounded-full group-hover:bg-green-400/30 transition-all ease-fluid" />
               <Icon icon="twemoji:fire" className="relative w-7 h-7 text-green-400 group-hover:scale-110 transition-all ease-fluid" />
             </div>
-            <div className="text-gray-300 text-sm font-medium">Most Shared</div>
+            <div className="text-gray-300 text-sm font-medium">Reposts</div>
           </div>
 
           <div className="p-6 flex flex-col items-center gap-3 group">
             <div className="relative">
               <div className="absolute inset-0 bg-amber-400/20 blur-xl rounded-full group-hover:bg-amber-400/30 transition-all ease-fluid" />
-              <Icon icon="twemoji:trophy" className="relative w-7 h-7 text-amber-400 group-hover:scale-110 transition-all ease-fluid" />
+              <Icon icon="twemoji:sparkles" className="relative w-7 h-7 text-amber-400 group-hover:scale-110 transition-all ease-fluid" />
             </div>
-            <div className="text-gray-300 text-sm font-medium">Top 10</div>
+            <div className="text-gray-300 text-sm font-medium">Engagement</div>
           </div>
         </div>
       </div>

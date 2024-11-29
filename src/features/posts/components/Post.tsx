@@ -121,7 +121,7 @@ export default function Post({ post }: PostProps) {
   const postContent = isRepost && typeof post.record === 'object' && 'subject' in post.record ? post.record.subject : post.record
 
   return (
-    <div className="bg-gray-800/30 backdrop-blur-sm text-gray-100 p-4 mt-4 rounded-xl border border-white/[0.08] shadow-xl inset-shadow-sm inset-shadow-white/5">
+    <div className="bg-gray-800/30 backdrop-blur-sm text-gray-100 p-4 mt-4 rounded-xl border border-white/[0.08] shadow-xl">
       <a href={postUrl} target="_blank" rel="noopener noreferrer" className="block">
         <div className="flex items-center gap-3 mb-2">
           {post.author.avatar && <img src={post.author.avatar} alt={post.author.handle} className="h-10 w-10 rounded-full ring-2 ring-white/10" />}
