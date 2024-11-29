@@ -28,6 +28,12 @@ export default function SearchContainer({ featureCard }: { featureCard: React.Re
     refetchOnWindowFocus: false,
   })
 
+  const handleClear = () => {
+    setHandle('')
+    setDebouncedHandle('')
+    setHasSearched(false)
+  }
+
   return (
     <>
       <AnimatePresence>
@@ -56,6 +62,7 @@ export default function SearchContainer({ featureCard }: { featureCard: React.Re
             setDebouncedHandle(handle)
             setHasSearched(true)
           }}
+          onClear={handleClear}
           isLoading={isLoading}
         />
       </motion.div>
