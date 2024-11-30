@@ -1,20 +1,12 @@
 'use client'
 
-import type { OutputSchema } from '@atproto/api/dist/client/types/app/bsky/feed/getAuthorFeed'
 import PostList from '@/features/posts/components/PostList'
+import { usePostFetching } from '@/hooks/usePostFetching'
 import { Icon } from '@iconify/react'
 import { useQuery } from '@tanstack/react-query'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useCallback, useState } from 'react'
-import { fetchPostsFromBsky } from '../../posts/actions'
 import SearchForm from './SearchForm'
-
-interface PostsResponse {
-  posts: OutputSchema['feed']
-  totalPages: number
-  currentPage: number
-  lastUpdated: string
-}
 
 interface ProfileResponse {
   postsCount?: number
@@ -36,7 +28,8 @@ export default function SearchContainer({ featureCard }: { featureCard: React.Re
   const [hasSearched, setHasSearched] = useState(false)
   const [handle, setHandle] = useState('')
   const [debouncedHandle, setDebouncedHandle] = useState('')
-  const [currentPage, setCurrentPage] = useState(1)
+
+  const { fetchPosts, getPaginatedPosts, isLoading, error, setCurrentPage, totalPosts } = usePostFetching()
 
   const { data: profileData } = useQuery<ProfileResponse>({
     queryKey: ['profile', debouncedHandle],
@@ -52,16 +45,6 @@ export default function SearchContainer({ featureCard }: { featureCard: React.Re
     staleTime: 1000 * 60 * 5,
   })
 
-  const { data, isLoading, isError, error } = useQuery<PostsResponse, Error>({
-    queryKey: ['posts', debouncedHandle, currentPage],
-    queryFn: () => fetchPostsFromBsky(debouncedHandle, currentPage),
-    enabled: Boolean(debouncedHandle),
-    staleTime: 1000 * 60 * 5,
-    gcTime: 1000 * 60 * 30,
-    retry: 2,
-    refetchOnWindowFocus: false,
-  })
-
   const handleClear = useCallback(() => {
     setHasSearched(false)
     requestAnimationFrame(() => {
@@ -69,23 +52,27 @@ export default function SearchContainer({ featureCard }: { featureCard: React.Re
       setDebouncedHandle('')
       setCurrentPage(1)
     })
-  }, [])
+  }, [setCurrentPage])
 
   const handleSubmit = useCallback(() => {
     setHasSearched(true)
     requestAnimationFrame(() => {
       setDebouncedHandle(handle)
-      setCurrentPage(1)
+      fetchPosts(handle)
     })
-  }, [handle])
+  }, [handle, fetchPosts])
 
-  const handlePageChange = useCallback((page: number) => {
-    setCurrentPage(page)
-  }, [])
+  const handlePageChange = useCallback(
+    (page: number) => {
+      setCurrentPage(page)
+    },
+    [setCurrentPage],
+  )
+
+  const paginatedData = getPaginatedPosts()
 
   return (
     <div className="space-y-8">
-      {/* Animated feature card and search form section */}
       <motion.div layout transition={springTransition}>
         <AnimatePresence mode="wait">
           {!hasSearched && (
@@ -122,7 +109,6 @@ export default function SearchContainer({ featureCard }: { featureCard: React.Re
         </motion.div>
       </motion.div>
 
-      {/* Static post list section */}
       <div className="relative min-h-[100px]">
         <AnimatePresence mode="wait">
           {isLoading
@@ -136,7 +122,6 @@ export default function SearchContainer({ featureCard }: { featureCard: React.Re
                   className="absolute inset-0 mt-6 flex justify-center items-center"
                 >
                   <div className="relative max-w-md bg-gray-800/20 backdrop-blur-sm rounded-lg border border-white/[0.08] shadow-lg overflow-hidden inline-flex">
-                    {' '}
                     <div className="absolute inset-0 overflow-hidden">
                       <div className="absolute inset-0 bg-linear-to-r/oklch from-transparent via-white/5 to-transparent animate-[shimmer_2s_infinite]" style={{ animationTimingFunction: 'ease-in-out' }} />
                     </div>
@@ -152,7 +137,7 @@ export default function SearchContainer({ featureCard }: { featureCard: React.Re
                             Analyzing Posts
                             {profileData?.postsCount !== undefined && ` (${profileData.postsCount.toLocaleString()} total)`}
                           </span>
-                          <span className="text-sm text-gray-400 whitespace-nowrap">Finding the most engaging posts</span>
+                          <span className="text-sm text-gray-400 whitespace-nowrap">{totalPosts > 0 ? `Processed ${totalPosts.toLocaleString()} posts so far...` : 'Finding the most engaging posts'}</span>
                         </div>
                       </div>
                     </div>
@@ -163,16 +148,25 @@ export default function SearchContainer({ featureCard }: { featureCard: React.Re
 
           {!isLoading && (
             <motion.div key="content" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.3, ease: 'easeInOut', delay: 0.1 }}>
-              {isError && (
+              {error && (
                 <div className="mt-4 p-4 bg-red-900/50 border border-red-500/50 text-red-200 rounded-md">
                   Error:
                   {error.message}
                 </div>
               )}
 
-              {!isError && data?.posts.length === 0 && debouncedHandle && <div className="mt-4 text-center text-gray-300">No posts found.</div>}
+              {!error && paginatedData.posts.length === 0 && debouncedHandle && <div className="mt-4 text-center text-gray-300">No posts found.</div>}
 
-              {data && data.posts.length > 0 && <PostList data={data} onPageChange={handlePageChange} />}
+              {paginatedData.posts.length > 0 && (
+                <PostList
+                  data={{
+                    posts: paginatedData.posts,
+                    totalPages: paginatedData.totalPages,
+                    currentPage: paginatedData.currentPage,
+                  }}
+                  onPageChange={handlePageChange}
+                />
+              )}
             </motion.div>
           )}
         </AnimatePresence>
