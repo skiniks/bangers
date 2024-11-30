@@ -35,13 +35,12 @@ export interface IsValidHandle {
 export function validateHandle(str: string, userDomain: string): IsValidHandle {
   str = str.trim()
   const fullHandle = createFullHandle(str, userDomain)
-
   const normalizedHandle = str.toLowerCase()
 
   const results = {
     handleChars: !normalizedHandle || (VALIDATE_REGEX.test(fullHandle) && !normalizedHandle.includes('.')),
     hyphenStartOrEnd: !normalizedHandle.startsWith('-') && !normalizedHandle.endsWith('-'),
-    frontLength: normalizedHandle.length >= 3,
+    frontLength: normalizedHandle.length >= 1,
     totalLength: fullHandle.length <= 253,
   }
 
