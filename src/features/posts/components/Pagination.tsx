@@ -11,7 +11,6 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pa
     return null
 
   const handlePageChange = (page: number) => {
-    // Scroll to top smoothly before changing the page
     window.scrollTo({ top: 0, behavior: 'smooth' })
     onPageChange(page)
   }
