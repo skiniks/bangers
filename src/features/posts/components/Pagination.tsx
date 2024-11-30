@@ -10,6 +10,12 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pa
   if (totalPages <= 1)
     return null
 
+  const handlePageChange = (page: number) => {
+    // Scroll to top smoothly before changing the page
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+    onPageChange(page)
+  }
+
   const getPageNumbers = () => {
     const pages: Array<number | 'start-ellipsis' | 'end-ellipsis'> = []
     const maxVisiblePages = 5
@@ -52,7 +58,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pa
   return (
     <div className="mt-8 flex justify-center items-center gap-2">
       <button
-        onClick={() => onPageChange(currentPage - 1)}
+        onClick={() => handlePageChange(currentPage - 1)}
         disabled={currentPage === 1}
         type="button"
         className="group relative p-2 rounded-lg
@@ -77,7 +83,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pa
             : (
                 <button
                   key={number}
-                  onClick={() => onPageChange(number)}
+                  onClick={() => handlePageChange(number)}
                   type="button"
                   className={`
                     group relative px-4 py-1.5 rounded-lg transition-all ease-fluid
@@ -105,7 +111,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pa
       </div>
 
       <button
-        onClick={() => onPageChange(currentPage + 1)}
+        onClick={() => handlePageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
         type="button"
         className="group relative p-2 rounded-lg
