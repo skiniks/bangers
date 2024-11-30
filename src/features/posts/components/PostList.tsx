@@ -16,7 +16,6 @@ interface PostListProps {
 export default function PostList({ data, onPageChange }: PostListProps) {
   const isFirstRender = useRef(true)
 
-  // Reset first render flag when posts change
   useEffect(() => {
     return () => {
       isFirstRender.current = true
@@ -28,7 +27,6 @@ export default function PostList({ data, onPageChange }: PostListProps) {
 
   const shouldAnimate = !isFirstRender.current
 
-  // Immediately set first render to false after checking
   isFirstRender.current = false
 
   return (

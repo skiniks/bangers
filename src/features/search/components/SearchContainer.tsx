@@ -5,7 +5,7 @@ import { usePostFetching } from '@/hooks/usePostFetching'
 import { Icon } from '@iconify/react'
 import { useQuery } from '@tanstack/react-query'
 import { AnimatePresence, motion } from 'framer-motion'
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import SearchForm from './SearchForm'
 
 interface ProfileResponse {
@@ -29,7 +29,7 @@ export default function SearchContainer({ featureCard }: { featureCard: React.Re
   const [handle, setHandle] = useState('')
   const [debouncedHandle, setDebouncedHandle] = useState('')
 
-  const { fetchPosts, getPaginatedPosts, isLoading, error, setCurrentPage, totalPosts } = usePostFetching()
+  const { fetchPosts, getPaginatedPosts, isLoading, error, setCurrentPage, totalPosts, reset } = usePostFetching()
 
   const { data: profileData } = useQuery<ProfileResponse>({
     queryKey: ['profile', debouncedHandle],
@@ -45,22 +45,23 @@ export default function SearchContainer({ featureCard }: { featureCard: React.Re
     staleTime: 1000 * 60 * 5,
   })
 
+  useEffect(() => {
+    reset()
+  }, [reset])
+
   const handleClear = useCallback(() => {
     setHasSearched(false)
-    requestAnimationFrame(() => {
-      setHandle('')
-      setDebouncedHandle('')
-      setCurrentPage(1)
-    })
-  }, [setCurrentPage])
+    setHandle('')
+    setDebouncedHandle('')
+    reset()
+  }, [reset])
 
   const handleSubmit = useCallback(() => {
+    reset()
     setHasSearched(true)
-    requestAnimationFrame(() => {
-      setDebouncedHandle(handle)
-      fetchPosts(handle)
-    })
-  }, [handle, fetchPosts])
+    setDebouncedHandle(handle)
+    fetchPosts(handle)
+  }, [handle, fetchPosts, reset])
 
   const handlePageChange = useCallback(
     (page: number) => {

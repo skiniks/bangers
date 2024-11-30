@@ -1,5 +1,5 @@
 import type { OutputSchema } from '@atproto/api/dist/client/types/app/bsky/feed/getAuthorFeed'
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 
 const POSTS_PER_PAGE = 20
 
@@ -24,6 +24,13 @@ export function usePostFetching() {
   const [analyzedPosts, setAnalyzedPosts] = useState<AnalyzedPost[]>([])
   const [currentPage, setCurrentPage] = useState(1)
   const [processedPosts, setProcessedPosts] = useState(0)
+
+  const reset = useCallback(() => {
+    setAnalyzedPosts([])
+    setCurrentPage(1)
+    setProcessedPosts(0)
+    setError(null)
+  }, [])
 
   function analyzePost(post: OutputSchema['feed'][0]): AnalyzedPost {
     const analysis: PostAnalysis = {
@@ -106,5 +113,6 @@ export function usePostFetching() {
     setCurrentPage,
     totalPosts: analyzedPosts.length,
     processedPosts,
+    reset,
   }
 }
