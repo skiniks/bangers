@@ -129,7 +129,7 @@ export default function SearchContainer({ featureCard }: { featureCard: React.Re
                     <div className="relative px-4 py-3 flex items-center gap-3">
                       <div className="relative flex-shrink-0">
                         <div className="absolute inset-0 bg-blue-400/20 rounded-full animate-[pulse_2s_ease-in-out_infinite]" />
-                        <Icon icon="mdi:loading" className="w-5 h-5 text-blue-400 animate-[spin_2s_linear_infinite]" />
+                        <Icon icon="mdi:loading" className="w-5 h-5 text-blue-400 animate-[spin_2s_linear_infinite]" aria-hidden="true" />
                       </div>
 
                       <div className="flex-1 min-w-0">

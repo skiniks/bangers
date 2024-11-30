@@ -83,7 +83,7 @@ export default function SearchForm({ handle, setHandle, onSubmit, onClear, isLoa
       <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-2">
         <div className="relative flex-1">
           <div className={`absolute left-3 top-1/2 -translate-y-1/2 rounded-full p-1.5 ${error ? 'bg-red-500/20' : 'bg-blue-500/20'}`}>
-            <Icon icon="mdi:at" className={`w-4 h-4 ${error ? 'text-red-500' : 'text-blue-500'}`} />
+            <Icon icon="mdi:at" className={`w-4 h-4 ${error ? 'text-red-500' : 'text-blue-500'}`} aria-hidden="true" />
           </div>
           <input
             type="text"
@@ -91,6 +91,7 @@ export default function SearchForm({ handle, setHandle, onSubmit, onClear, isLoa
             onChange={e => handleInputChange(e.target.value)}
             onBlur={() => setIsDirty(true)}
             placeholder="Enter handle (e.g. user.bsky.social)"
+            aria-label="Bluesky handle"
             className={`w-full form-input pl-12 pr-12 h-12
               bg-gray-800/50
               text-white
@@ -107,19 +108,21 @@ export default function SearchForm({ handle, setHandle, onSubmit, onClear, isLoa
             <button
               type="button"
               onClick={handleClearClick}
+              aria-label="Clear search"
               className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5
                 text-gray-400 hover:text-white
                 rounded-full
                 hover:bg-gray-700/50
                 transition-all"
             >
-              <Icon icon="mdi:close" className="w-4 h-4" />
+              <Icon icon="mdi:close" className="w-4 h-4" aria-hidden="true" />
             </button>
           )}
         </div>
         <button
           type="submit"
           disabled={isLoading || !isValid}
+          aria-label={isLoading ? 'Loading...' : 'Fetch posts'}
           className="h-12 sm:w-[144px] w-full
             bg-green-500 hover:bg-green-600 text-white font-medium
             rounded-lg focus:outline-hidden focus:ring-2 focus:ring-green-500/50

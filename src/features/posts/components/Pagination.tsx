@@ -69,7 +69,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pa
           transition-all ease-fluid"
       >
         <div className="absolute inset-0 bg-linear-to-br/oklch from-blue-500/0 to-blue-500/0 group-hover:from-blue-500/5 group-hover:to-blue-500/10 rounded-lg transition-all ease-fluid" />
-        <Icon icon="mdi:chevron-left" className="relative w-5 h-5" />
+        <Icon icon="mdi:chevron-left" className="relative w-5 h-5" aria-hidden="true" />
       </button>
 
       <div className="flex gap-1.5">
@@ -122,7 +122,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pa
           transition-all ease-fluid"
       >
         <div className="absolute inset-0 bg-linear-to-br/oklch from-blue-500/0 to-blue-500/0 group-hover:from-blue-500/5 group-hover:to-blue-500/10 rounded-lg transition-all ease-fluid" />
-        <Icon icon="mdi:chevron-right" className="relative w-5 h-5" />
+        <Icon icon="mdi:chevron-right" className="relative w-5 h-5" aria-hidden="true" />
       </button>
     </div>
   )

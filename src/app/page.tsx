@@ -33,7 +33,7 @@ export default function Page() {
           <div className="p-6 flex flex-col items-center gap-3 group">
             <div className="relative">
               <div className="absolute inset-0 bg-red-400/20 blur-xl rounded-full group-hover:bg-red-400/30 transition-all ease-fluid" />
-              <Icon icon="mdi:heart" className="relative w-7 h-7 text-red-400 group-hover:scale-110 transition-all ease-fluid" />
+              <Icon icon="mdi:heart" className="relative w-7 h-7 text-red-400 group-hover:scale-110 transition-all ease-fluid" aria-hidden="true" />
             </div>
             <div className="text-gray-300 text-sm font-medium">Likes</div>
           </div>
@@ -41,7 +41,7 @@ export default function Page() {
           <div className="p-6 flex flex-col items-center gap-3 group border-l border-r border-white/[0.08]">
             <div className="relative">
               <div className="absolute inset-0 bg-green-400/20 blur-xl rounded-full group-hover:bg-green-400/30 transition-all ease-fluid" />
-              <Icon icon="twemoji:fire" className="relative w-7 h-7 text-green-400 group-hover:scale-110 transition-all ease-fluid" />
+              <Icon icon="twemoji:fire" className="relative w-7 h-7 text-green-400 group-hover:scale-110 transition-all ease-fluid" aria-hidden="true" />
             </div>
             <div className="text-gray-300 text-sm font-medium">Reposts</div>
           </div>
@@ -49,7 +49,7 @@ export default function Page() {
           <div className="p-6 flex flex-col items-center gap-3 group">
             <div className="relative">
               <div className="absolute inset-0 bg-amber-400/20 blur-xl rounded-full group-hover:bg-amber-400/30 transition-all ease-fluid" />
-              <Icon icon="twemoji:sparkles" className="relative w-7 h-7 text-amber-400 group-hover:scale-110 transition-all ease-fluid" />
+              <Icon icon="twemoji:sparkles" className="relative w-7 h-7 text-amber-400 group-hover:scale-110 transition-all ease-fluid" aria-hidden="true" />
             </div>
             <div className="text-gray-300 text-sm font-medium">Engagement</div>
           </div>
