@@ -9,19 +9,16 @@ export default function Page() {
 
       <div className="relative px-8 pt-12 pb-8">
         <div className="flex flex-col gap-4">
-          <h2 className="text-balance text-4xl font-bold tracking-tight text-white">
-            Find Your Best
-            {' '}
+          <h2 className="text-balance text-4xl font-bold tracking-tight text-white md:whitespace-pre-line">
+            {'Find Your Best '}
             <span className="bg-linear-to-r/oklch from-blue-400 to-blue-300 text-transparent bg-clip-text">Posts</span>
           </h2>
-          <p className="text-gray-400 text-lg font-light">
-            Discover your most engaging
-            {' '}
+          <p className="text-gray-400 text-lg font-light md:whitespace-pre-line">
+            {'Discover your most engaging '}
             <a href="https://bsky.app" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 transition-colors ease-fluid font-bold">
               Bluesky
             </a>
-            {' '}
-            posts, ranked by community engagement.
+            {' posts,\nranked by community engagement.'}
           </p>
         </div>
       </div>
