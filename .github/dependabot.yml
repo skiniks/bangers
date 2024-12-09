@@ -6,7 +6,7 @@ updates:
       interval: weekly
     versioning-strategy: auto
     reviewers:
-      - project-owner
+      - skiniks
     groups:
       dependencies:
         patterns:
