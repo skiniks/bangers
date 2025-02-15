@@ -1,14 +1,9 @@
+import type { TextFacet } from '@/shared/utils/richtext'
 import type { AppBskyEmbedImages, AppBskyEmbedRecord, AppBskyEmbedRecordWithMedia, AppBskyFeedDefs } from '@atcute/client/lexicons'
+import { segmentRichText } from '@/shared/utils/richtext'
 import { getElapsedTime } from '@/shared/utils/time'
-import RichtextBuilder from '@atcute/bluesky-richtext-builder'
 import { Icon } from '@iconify/react'
 import { useMemo } from 'react'
-
-interface Segment {
-  type: 'text' | 'mention' | 'link' | 'tag'
-  text: string
-  uri?: string
-}
 
 interface PostProps {
   post: AppBskyFeedDefs.PostView
@@ -22,10 +17,7 @@ interface PostContentProps {
 
 interface TextRecord {
   text: string
-  facets?: Array<{
-    index: { byteStart: number, byteEnd: number }
-    features: Array<{ $type: string, did?: string, uri?: string, [key: string]: unknown }>
-  }>
+  facets?: TextFacet[]
   [key: string]: unknown
 }
 
@@ -56,93 +48,52 @@ function isPostView(record: unknown): record is AppBskyFeedDefs.PostView {
   return typeof record === 'object' && record !== null && 'uri' in record && 'cid' in record && 'author' in record && 'record' in record && 'indexedAt' in record
 }
 
-function RichTextRenderer({ text, facets }: { text: string, facets?: TextRecord['facets'] }) {
-  const segments = useMemo(() => {
-    const builder = new RichtextBuilder()
-    if (!facets) {
-      builder.addText(text)
-      const { text: resultText } = builder.build()
-      return [{ type: 'text' as const, text: resultText }]
-    }
-
-    let lastIndex = 0
-    const sortedFacets = [...facets].sort((a, b) => a.index.byteStart - b.index.byteStart)
-
-    sortedFacets.forEach((facet) => {
-      if (facet.index.byteStart > lastIndex) {
-        builder.addText(text.slice(lastIndex, facet.index.byteStart))
-      }
-
-      const facetText = text.slice(facet.index.byteStart, facet.index.byteEnd)
-      const feature = facet.features[0]
-
-      if (feature.$type === 'app.bsky.richtext.facet#mention' && feature.did) {
-        builder.addMention(facetText, feature.did as `did:${string}`)
-      }
-      else if (feature.$type === 'app.bsky.richtext.facet#link' && feature.uri) {
-        builder.addLink(facetText, feature.uri)
-      }
-      else if (feature.$type === 'app.bsky.richtext.facet#tag') {
-        builder.addTag(facetText)
-      }
-
-      lastIndex = facet.index.byteEnd
-    })
-
-    if (lastIndex < text.length) {
-      builder.addText(text.slice(lastIndex))
-    }
-
-    const { text: resultText, facets: resultFacets } = builder.build()
-
-    return resultFacets.map((facet) => {
-      const facetText = resultText.slice(facet.index.byteStart, facet.index.byteEnd)
-      const feature = facet.features[0]
-
-      if (feature.$type === 'app.bsky.richtext.facet#mention') {
-        return { type: 'mention' as const, text: facetText }
-      }
-      else if (feature.$type === 'app.bsky.richtext.facet#link') {
-        return { type: 'link' as const, text: facetText, uri: feature.uri }
-      }
-      else if (feature.$type === 'app.bsky.richtext.facet#tag') {
-        return { type: 'tag' as const, text: facetText }
-      }
-
-      return { type: 'text' as const, text: facetText }
-    })
-  }, [text, facets])
+function RichTextRenderer({ text, facets }: { text: string, facets?: TextFacet[] }) {
+  const segments = useMemo(() => segmentRichText(text, facets), [text, facets])
 
   return (
     <span className="whitespace-pre-wrap break-words">
-      {segments.map((segment: Segment, index: number) => {
-        const key = segment.type === 'mention'
-          ? `mention-${segment.text}`
-          : segment.type === 'link'
-            ? `link-${segment.uri}`
-            : segment.type === 'tag'
-              ? `tag-${segment.text}`
-              : `text-${segment.text.substring(0, 10)}-${index}`
+      {segments.map((segment, index) => {
+        const feature = segment.feature
+        const key = `${index}-${segment.text}`
 
-        if (segment.type === 'mention') {
+        if (feature?.$type === 'app.bsky.richtext.facet#mention') {
           return (
-            <a key={key} href={`https://bsky.app/profile/${segment.text}`} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">
+            <a
+              key={key}
+              href={`https://bsky.app/profile/${segment.text.replace(/^@/, '')}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-400 hover:underline"
+            >
               {segment.text}
             </a>
           )
         }
 
-        if (segment.type === 'link') {
+        if (feature?.$type === 'app.bsky.richtext.facet#link' && feature.uri) {
           return (
-            <a key={key} href={segment.uri} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">
+            <a
+              key={key}
+              href={feature.uri}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-400 hover:underline"
+            >
               {segment.text}
             </a>
           )
         }
 
-        if (segment.type === 'tag') {
+        if (feature?.$type === 'app.bsky.richtext.facet#tag') {
           return (
-            <a key={key} href={`https://bsky.app/search?q=${encodeURIComponent(segment.text)}`} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">
+            <a
+              key={key}
+              href={`https://bsky.app/search?q=${encodeURIComponent(segment.text.replace(/^#/, ''))}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-400 hover:underline"
+            >
               {segment.text}
             </a>
           )
