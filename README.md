@@ -16,22 +16,22 @@ Find your best Bluesky posts, ranked by engagement. Discover and showcase your m
 git clone https://github.com/skiniks/bangers.git
 
 # Install dependencies
-bun install
+pnpm install
 
 # Start the development server
-bun dev
+pnpm dev
 ```
 
 Visit [http://localhost:3000](http://localhost:3000) to see the app.
 
 ## Tech Stack
 
-- [Next.js](https://nextjs.org/) - React Framework
-- [AT Protocol](https://atproto.com/) - Bluesky API
-- [TailwindCSS](https://tailwindcss.com/) - Styling
-- [Framer Motion](https://www.framer.com/motion/) - Animations
-- [React Query](https://tanstack.com/query/latest) - Data Fetching
-- [TypeScript](https://www.typescriptlang.org/) - Type Safety
+- [Next.js](https://nextjs.org/)
+- [@atcute/client](https://github.com/mary-ext/atcute)
+- [TailwindCSS](https://tailwindcss.com/)
+- [Framer Motion](https://www.framer.com/motion/)
+- [React Query](https://tanstack.com/query/latest)
+- [TypeScript](https://www.typescriptlang.org/)
 
 ## Contributing
 

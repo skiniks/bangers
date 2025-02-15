@@ -1,4 +1,4 @@
-import type { FeedViewPost } from '@atproto/api/dist/client/types/app/bsky/feed/defs'
+import type { AppBskyFeedDefs } from '@atcute/client/lexicons'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useEffect, useRef } from 'react'
 import Pagination from './Pagination'
@@ -6,7 +6,7 @@ import Post from './Post'
 
 interface PostListProps {
   data: {
-    posts: FeedViewPost[]
+    posts: AppBskyFeedDefs.FeedViewPost[]
     totalPages: number
     currentPage: number
   }

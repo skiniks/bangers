@@ -1,25 +1,30 @@
-import type { AppBskyEmbedImages, AppBskyEmbedRecord, AppBskyEmbedRecordWithMedia, AppBskyFeedDefs } from '@atproto/api'
-import type { FeedViewPost } from '@atproto/api/dist/client/types/app/bsky/feed/defs'
+import type { AppBskyEmbedImages, AppBskyEmbedRecord, AppBskyEmbedRecordWithMedia, AppBskyFeedDefs } from '@atcute/client/lexicons'
 import { getElapsedTime } from '@/shared/utils/time'
-import { RichText } from '@atproto/api'
+import RichtextBuilder from '@atcute/bluesky-richtext-builder'
 import { Icon } from '@iconify/react'
 import { useMemo } from 'react'
 
+interface Segment {
+  type: 'text' | 'mention' | 'link' | 'tag'
+  text: string
+  uri?: string
+}
+
 interface PostProps {
-  post: FeedViewPost['post']
+  post: AppBskyFeedDefs.PostView
   identifier: string
 }
 
 interface PostContentProps {
   record: Record<string, unknown>
-  embed?: AppBskyFeedDefs.FeedViewPost['embed']
+  embed?: AppBskyFeedDefs.PostView['embed']
 }
 
 interface TextRecord {
   text: string
   facets?: Array<{
     index: { byteStart: number, byteEnd: number }
-    features: Array<{ $type: string, [key: string]: unknown }>
+    features: Array<{ $type: string, did?: string, uri?: string, [key: string]: unknown }>
   }>
   [key: string]: unknown
 }
@@ -52,26 +57,74 @@ function isPostView(record: unknown): record is AppBskyFeedDefs.PostView {
 }
 
 function RichTextRenderer({ text, facets }: { text: string, facets?: TextRecord['facets'] }) {
-  const richText = useMemo(() => {
-    if (!facets)
-      return new RichText({ text })
-    return new RichText({ text, facets })
-  }, [text, facets])
+  const segments = useMemo(() => {
+    const builder = new RichtextBuilder()
+    if (!facets) {
+      builder.addText(text)
+      const { text: resultText } = builder.build()
+      return [{ type: 'text' as const, text: resultText }]
+    }
 
-  const segments = useMemo(() => Array.from(richText.segments()), [richText])
+    let lastIndex = 0
+    const sortedFacets = [...facets].sort((a, b) => a.index.byteStart - b.index.byteStart)
+
+    sortedFacets.forEach((facet) => {
+      if (facet.index.byteStart > lastIndex) {
+        builder.addText(text.slice(lastIndex, facet.index.byteStart))
+      }
+
+      const facetText = text.slice(facet.index.byteStart, facet.index.byteEnd)
+      const feature = facet.features[0]
+
+      if (feature.$type === 'app.bsky.richtext.facet#mention' && feature.did) {
+        builder.addMention(facetText, feature.did as `did:${string}`)
+      }
+      else if (feature.$type === 'app.bsky.richtext.facet#link' && feature.uri) {
+        builder.addLink(facetText, feature.uri)
+      }
+      else if (feature.$type === 'app.bsky.richtext.facet#tag') {
+        builder.addTag(facetText)
+      }
+
+      lastIndex = facet.index.byteEnd
+    })
+
+    if (lastIndex < text.length) {
+      builder.addText(text.slice(lastIndex))
+    }
+
+    const { text: resultText, facets: resultFacets } = builder.build()
+
+    return resultFacets.map((facet) => {
+      const facetText = resultText.slice(facet.index.byteStart, facet.index.byteEnd)
+      const feature = facet.features[0]
+
+      if (feature.$type === 'app.bsky.richtext.facet#mention') {
+        return { type: 'mention' as const, text: facetText }
+      }
+      else if (feature.$type === 'app.bsky.richtext.facet#link') {
+        return { type: 'link' as const, text: facetText, uri: feature.uri }
+      }
+      else if (feature.$type === 'app.bsky.richtext.facet#tag') {
+        return { type: 'tag' as const, text: facetText }
+      }
+
+      return { type: 'text' as const, text: facetText }
+    })
+  }, [text, facets])
 
   return (
     <span className="whitespace-pre-wrap break-words">
-      {segments.map((segment, index) => {
-        const key = segment.isMention()
+      {segments.map((segment: Segment, index: number) => {
+        const key = segment.type === 'mention'
           ? `mention-${segment.text}`
-          : segment.isLink()
-            ? `link-${segment.link?.uri}`
-            : segment.isTag()
+          : segment.type === 'link'
+            ? `link-${segment.uri}`
+            : segment.type === 'tag'
               ? `tag-${segment.text}`
               : `text-${segment.text.substring(0, 10)}-${index}`
 
-        if (segment.isMention()) {
+        if (segment.type === 'mention') {
           return (
             <a key={key} href={`https://bsky.app/profile/${segment.text}`} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">
               {segment.text}
@@ -79,15 +132,15 @@ function RichTextRenderer({ text, facets }: { text: string, facets?: TextRecord[
           )
         }
 
-        if (segment.isLink()) {
+        if (segment.type === 'link') {
           return (
-            <a key={key} href={segment.link?.uri} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">
+            <a key={key} href={segment.uri} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">
               {segment.text}
             </a>
           )
         }
 
-        if (segment.isTag()) {
+        if (segment.type === 'tag') {
           return (
             <a key={key} href={`https://bsky.app/search?q=${encodeURIComponent(segment.text)}`} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">
               {segment.text}
@@ -146,7 +199,7 @@ function PostMediaContent({ images }: { images: ImageView[] }) {
   )
 }
 
-function PostEmbed({ embed }: { embed: AppBskyFeedDefs.FeedViewPost['embed'] }) {
+function PostEmbed({ embed }: { embed: AppBskyFeedDefs.PostView['embed'] }) {
   if (!isEmbedView(embed))
     return null
 
@@ -226,7 +279,7 @@ export default function Post({ post }: PostProps) {
   const postId = post.uri.split('/').pop()
   const postUrl = `https://bsky.app/profile/${post.author.handle}/post/${postId}`
   const isRepost = post.record && typeof post.record === 'object' && '$type' in post.record && post.record.$type === 'app.bsky.feed.defs#repostRecord'
-  const postContent = isRepost && typeof post.record === 'object' && 'subject' in post.record ? post.record.subject : post.record
+  const postContent = isRepost && post.record && typeof post.record === 'object' && 'subject' in post.record ? post.record.subject : post.record
 
   return (
     <div className="bg-gray-800/30 backdrop-blur-sm text-gray-100 p-4 mt-4 rounded-xl border border-white/[0.08] shadow-xl">
@@ -242,7 +295,7 @@ export default function Post({ post }: PostProps) {
           </div>
         </div>
 
-        <PostContent record={postContent as Record<string, unknown>} embed={post.embed} />
+        {typeof postContent === 'object' && postContent !== null && <PostContent record={postContent as Record<string, unknown>} embed={post.embed} />}
 
         <div className="flex justify-between items-center text-gray-400">
           <div className="flex items-center">

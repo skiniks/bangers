@@ -1,4 +1,4 @@
-import type { OutputSchema } from '@atproto/api/dist/client/types/app/bsky/feed/getAuthorFeed'
+import type { AppBskyFeedDefs } from '@atcute/client/lexicons'
 import { useCallback, useState } from 'react'
 
 const POSTS_PER_PAGE = 20
@@ -13,7 +13,7 @@ export interface PostAnalysis {
 }
 
 export interface AnalyzedPost {
-  post: OutputSchema['feed'][0]['post']
+  post: AppBskyFeedDefs.FeedViewPost['post']
   analysis: PostAnalysis
   score: number
 }
@@ -32,7 +32,7 @@ export function usePostFetching() {
     setError(null)
   }, [])
 
-  function analyzePost(post: OutputSchema['feed'][0]): AnalyzedPost {
+  function analyzePost(post: AppBskyFeedDefs.FeedViewPost): AnalyzedPost {
     const analysis: PostAnalysis = {
       engagement: (post.post.likeCount || 0) + (post.post.repostCount || 0),
       isReply: post.reply !== undefined,
@@ -56,7 +56,7 @@ export function usePostFetching() {
     setError(null)
     setProcessedPosts(0)
 
-    const allPosts: OutputSchema['feed'] = []
+    const allPosts: AppBskyFeedDefs.FeedViewPost[] = []
     let cursor: string | undefined
     const uniqueIds = new Set()
 
@@ -67,7 +67,7 @@ export function usePostFetching() {
         if (!response.ok)
           throw new Error(`HTTP error! status: ${response.status}`)
 
-        const data: OutputSchema = await response.json()
+        const data: { feed: AppBskyFeedDefs.FeedViewPost[], cursor?: string } = await response.json()
 
         if (!data?.feed)
           break
