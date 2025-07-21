@@ -14,30 +14,30 @@
     "lint:fix": "eslint . --fix"
   },
   "dependencies": {
-    "@atcute/bluesky": "^1.0.14",
-    "@atcute/client": "^2.0.8",
-    "@iconify/react": "^5.2.0",
-    "@tanstack/react-query": "^5.69.0",
+    "@atcute/bluesky": "^3.1.5",
+    "@atcute/client": "^4.0.3",
+    "@iconify/react": "^6.0.0",
+    "@tanstack/react-query": "^5.83.0",
     "@vercel/analytics": "^1.5.0",
-    "@vercel/og": "^0.6.5",
-    "framer-motion": "^12.5.0",
-    "next": "^15.2.3",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "@vercel/og": "^0.7.2",
+    "framer-motion": "^12.23.6",
+    "next": "^15.4.2",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^4.10.1",
-    "@eslint-react/eslint-plugin": "^1.35.0",
-    "@tailwindcss/postcss": "^4.0.14",
-    "@types/node": "^22.13.10",
-    "@types/react": "^19.0.11",
-    "@types/react-dom": "^19.0.4",
-    "eslint": "^9.22.0",
+    "@antfu/eslint-config": "^4.17.0",
+    "@eslint-react/eslint-plugin": "^1.52.3",
+    "@tailwindcss/postcss": "^4.1.11",
+    "@types/node": "^24.0.15",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
+    "eslint": "^9.31.0",
     "eslint-plugin-react-hooks": "^5.2.0",
-    "eslint-plugin-react-refresh": "^0.4.19",
+    "eslint-plugin-react-refresh": "^0.4.20",
     "jiti": "^2.4.2",
-    "postcss": "^8.5.3",
-    "tailwindcss": "^4.0.14",
-    "typescript": "^5.8.2"
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.11",
+    "typescript": "^5.8.3"
   }
 }
