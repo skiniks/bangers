@@ -14,22 +14,22 @@
     "lint:fix": "eslint . --fix"
   },
   "dependencies": {
-    "@atcute/bluesky": "^1.0.15",
-    "@atcute/client": "^2.0.9",
-    "@iconify/react": "^5.2.1",
+    "@atcute/bluesky": "^3.2.0",
+    "@atcute/client": "^4.0.3",
+    "@iconify/react": "^6.0.0",
     "@tanstack/react-query": "^5.83.0",
     "@vercel/analytics": "^1.5.0",
-    "@vercel/og": "^0.6.8",
+    "@vercel/og": "^0.8.5",
     "framer-motion": "^12.23.11",
     "next": "^15.4.4",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^4.19.0",
+    "@antfu/eslint-config": "^5.0.0",
     "@eslint-react/eslint-plugin": "^1.52.3",
     "@tailwindcss/postcss": "^4.1.11",
-    "@types/node": "^22.16.5",
+    "@types/node": "^24.1.0",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
     "eslint": "^9.32.0",
