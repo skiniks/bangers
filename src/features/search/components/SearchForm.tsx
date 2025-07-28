@@ -1,8 +1,8 @@
 import type { IsValidHandle } from '../utils/strings/handles'
-import LoadingButton from '@/shared/components/LoadingButton'
 import { Icon } from '@iconify/react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useState } from 'react'
+import LoadingButton from '@/shared/components/LoadingButton'
 import { validateHandle } from '../utils/strings/handles'
 
 interface SearchFormProps {

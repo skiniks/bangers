@@ -1,9 +1,9 @@
-import type { TextFacet } from '@/shared/utils/richtext'
 import type { AppBskyEmbedImages, AppBskyEmbedRecord, AppBskyEmbedRecordWithMedia, AppBskyFeedDefs } from '@atcute/client/lexicons'
-import { segmentRichText } from '@/shared/utils/richtext'
-import { getElapsedTime } from '@/shared/utils/time'
+import type { TextFacet } from '@/shared/utils/richtext'
 import { Icon } from '@iconify/react'
 import { useMemo } from 'react'
+import { segmentRichText } from '@/shared/utils/richtext'
+import { getElapsedTime } from '@/shared/utils/time'
 
 interface PostProps {
   post: AppBskyFeedDefs.PostView

@@ -1,11 +1,11 @@
 'use client'
 
-import PostList from '@/features/posts/components/PostList'
-import { usePostFetching } from '@/hooks/usePostFetching'
 import { Icon } from '@iconify/react'
 import { useQuery } from '@tanstack/react-query'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useCallback, useEffect, useState } from 'react'
+import PostList from '@/features/posts/components/PostList'
+import { usePostFetching } from '@/hooks/usePostFetching'
 import SearchForm from './SearchForm'
 
 interface ProfileResponse {
@@ -14,11 +14,11 @@ interface ProfileResponse {
 
 const fadeTransition = {
   duration: 0.2,
-  ease: [0.32, 0.72, 0, 1],
+  ease: [0.32, 0.72, 0, 1] as const,
 }
 
 const springTransition = {
-  type: 'spring',
+  type: 'spring' as const,
   stiffness: 200,
   damping: 25,
   mass: 0.5,

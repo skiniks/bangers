@@ -1,6 +1,6 @@
+import { Icon } from '@iconify/react'
 import SearchContainer from '@/features/search/components/SearchContainer'
 import Nav from '@/shared/components/Nav'
-import { Icon } from '@iconify/react'
 
 export default function Page() {
   const featureCard = (
