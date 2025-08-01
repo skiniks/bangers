@@ -16,9 +16,6 @@
       ]
     },
     "resolveJsonModule": true,
-    "types": [
-      "@atcute/bluesky/lexicons"
-    ],
     "allowJs": true,
     "strict": true,
     "noEmit": true,
