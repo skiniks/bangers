@@ -1,4 +1,4 @@
-import type { AppBskyFeedDefs } from '@atcute/client/lexicons'
+import type { AppBskyFeedDefs } from '@atcute/bluesky'
 import { useCallback, useState } from 'react'
 
 const POSTS_PER_PAGE = 20

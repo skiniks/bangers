@@ -1,4 +1,4 @@
-import type { AppBskyEmbedImages, AppBskyEmbedRecord, AppBskyEmbedRecordWithMedia, AppBskyFeedDefs } from '@atcute/client/lexicons'
+import type { AppBskyEmbedImages, AppBskyEmbedRecord, AppBskyEmbedRecordWithMedia, AppBskyFeedDefs } from '@atcute/bluesky'
 import type { TextFacet } from '@/shared/utils/richtext'
 import { Icon } from '@iconify/react'
 import { useMemo } from 'react'
