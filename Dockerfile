@@ -27,12 +27,7 @@ ENV NODE_ENV=production \
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 
-RUN --mount=type=bind,from=builder,source=/app/public,target=/tmp/public \
-    if [ -d /tmp/public ] && [ "$(ls -A /tmp/public)" ]; then \
-      cp -r /tmp/public ./public; \
-    else \
-      mkdir -p ./public; \
-    fi
+RUN mkdir -p ./public
 
 EXPOSE 3000
 
