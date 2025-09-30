@@ -24,9 +24,15 @@ ENV NODE_ENV=production \
     PORT=3000 \
     HOSTNAME=0.0.0.0
 
-COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
+
+RUN --mount=type=bind,from=builder,source=/app/public,target=/tmp/public \
+    if [ -d /tmp/public ] && [ "$(ls -A /tmp/public)" ]; then \
+      cp -r /tmp/public ./public; \
+    else \
+      mkdir -p ./public; \
+    fi
 
 EXPOSE 3000
 
