@@ -1,6 +1,4 @@
 import type { Metadata, Viewport } from 'next'
-import process from 'node:process'
-import { Analytics } from '@vercel/analytics/react'
 import { Inter } from 'next/font/google'
 import Providers from './providers'
 import '@/styles/globals.css'
@@ -21,13 +19,6 @@ export const metadata: Metadata = {
     title: 'Bangers - Find Your Best Bluesky Posts',
     description: 'Discover your most engaging Bluesky posts, ranked by community engagement.',
     siteName: 'Bangers',
-    images: [
-      {
-        url: `${process.env.NEXT_PUBLIC_BASE_URL}/api/og?title=Bangers`,
-        width: 1200,
-        height: 630,
-      },
-    ],
   },
 }
 
@@ -46,7 +37,6 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <Providers>{children}</Providers>
-        <Analytics />
       </body>
     </html>
   )
