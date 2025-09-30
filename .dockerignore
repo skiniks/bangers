@@ -5,7 +5,6 @@ node_modules
 README.md
 *.md
 .env*.local
-.vercel
 .DS_Store
 *.log
 npm-debug.log*
