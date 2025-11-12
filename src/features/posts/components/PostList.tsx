@@ -1,6 +1,5 @@
 import type { AppBskyFeedDefs } from '@atcute/bluesky'
 import { AnimatePresence, motion } from 'framer-motion'
-import { useEffect, useRef } from 'react'
 import Pagination from './Pagination'
 import Post from './Post'
 
@@ -14,20 +13,8 @@ interface PostListProps {
 }
 
 export default function PostList({ data, onPageChange }: PostListProps) {
-  const isFirstRender = useRef(true)
-
-  useEffect(() => {
-    return () => {
-      isFirstRender.current = true
-    }
-  }, [data.posts])
-
   if (!Array.isArray(data.posts))
     return null
-
-  const shouldAnimate = !isFirstRender.current
-
-  isFirstRender.current = false
 
   return (
     <div className="space-y-4">
@@ -35,7 +22,7 @@ export default function PostList({ data, onPageChange }: PostListProps) {
         {data.posts.map(feedItem => (
           <motion.div
             key={feedItem.post.cid}
-            initial={shouldAnimate ? { opacity: 0, y: 20 } : false}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{
@@ -49,7 +36,7 @@ export default function PostList({ data, onPageChange }: PostListProps) {
       </AnimatePresence>
 
       {data.totalPages > 1 && (
-        <motion.div initial={shouldAnimate ? { opacity: 0 } : false} animate={{ opacity: 1 }} transition={{ duration: 0.2 }}>
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }}>
           <Pagination currentPage={data.currentPage} totalPages={data.totalPages} onPageChange={onPageChange} />
         </motion.div>
       )}
